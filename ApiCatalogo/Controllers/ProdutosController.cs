@@ -1,90 +1,91 @@
-﻿using System;
+﻿using ApiCatalogo.DTOs;
+using ApiCatalogo.Filters;
+using ApiCatalogo.Models;
+using ApiCatalogo.Repository;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ApiCatalogo.Context;
-using ApiCatalogo.Filters;
-using ApiCatalogo.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-namespace ApiCatalogo.Controllers
-{
+namespace ApiCatalogo.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProdutosController : ControllerBase
-    {
-        private readonly AppDbContext _context;
-        public ProdutosController(AppDbContext context)
-        {
-            _context = context;
+    public class ProdutosController : ControllerBase {
+
+        private readonly IUnityOfWork _uof;
+        private readonly IMapper _mapper;
+        public ProdutosController(IUnityOfWork context, IMapper mapper) {
+            _uof = context;
+            _mapper = mapper;
+        }
+
+        [HttpGet("menorpreco")]
+        public async Task<ActionResult<IEnumerable<ProdutoDTO>>> GetProdutosPreco() {
+            var produtos =  await _uof.ProdutoRepository.GetProdutosPorPreco();
+            var produtosDTO = _mapper.Map<List<ProdutoDTO>>(produtos);
+            return produtosDTO;
         }
 
         [HttpGet]
         [ServiceFilter(typeof(ApiLoggingFilter))]
-        public ActionResult<IEnumerable<Produto>> Get()
-        {
-            return _context.Produtos.AsNoTracking().ToList();
+        public async Task<ActionResult<IEnumerable<ProdutoDTO>>> Get() {
+            var produtos = await _uof.ProdutoRepository.Get().ToListAsync();
+            var produtosDTO = _mapper.Map<List<ProdutoDTO>>(produtos);
+            return produtosDTO;
         }
 
-        [HttpGet("{id}", Name ="ObterProduto")]
-        public ActionResult<Produto> Get(int id)
-        {
+        [HttpGet("{id}", Name = "ObterProduto")]
+        public async Task<ActionResult<ProdutoDTO>> Get(int id) {
 
-            //string[] teste = null;
-            //if(teste.Length > 0) { }
-
-            var produto = _context.Produtos.AsNoTracking().FirstOrDefault(p => p.ProdutoId == id);
-            if(produto == null)
-            {
+            var produto = await _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
+            if (produto == null) {
                 return NotFound();
-            } else
-            {
-                return produto;
+            } else {
+                var produtoDTO = _mapper.Map<ProdutoDTO>(produto);
+                return produtoDTO;
             }
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody]Produto produto)
-        {
-            //if (!ModelState.IsValid) {
-            //    return BadRequest(ModelState);
-            //} else { 
-                
-            //}
+        public async Task<ActionResult> Post([FromBody] ProdutoDTO produtoDto) {
 
-            _context.Produtos.Add(produto);
-            _context.SaveChanges();
-            return new CreatedAtRouteResult("ObterProduto", new { id= produto.ProdutoId}, produto);
+            var produto = _mapper.Map<Produto>(produtoDto);
+            _uof.ProdutoRepository.Add(produto);
+            await _uof.Commit();
+
+            var produtoDTO = _mapper.Map<ProdutoDTO>(produto);
+
+            return new CreatedAtRouteResult("ObterProduto", new { id = produto.ProdutoId }, produtoDTO);
         }
 
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Produto produto)
-        {
-            if(id != produto.ProdutoId) { 
-                return BadRequest();    
+        public async Task<ActionResult> Put(int id, [FromBody] ProdutoDTO produtoDto) {
+            if (id != produtoDto.ProdutoId) {
+                return BadRequest();
             }
 
-            _context.Entry(produto).State = EntityState.Modified;
-            _context.SaveChanges();
+            var produto = _mapper.Map<Produto>(produtoDto);
+
+            _uof.ProdutoRepository.Update(produto);
+            await _uof.Commit();
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<Produto> Delete(int id)
-        {
-            var produto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
-            //var produto = _context.Produtos.Find(id);
-
-            if(produto == null)
-            {
+        public async Task<ActionResult<ProdutoDTO>> Delete(int id) {
+            var produto = await _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
+            if (produto == null) {
                 return NotFound();
             }
 
-            _context.Produtos.Remove(produto);
-            _context.SaveChanges();
-            return produto;
+            _uof.ProdutoRepository.Delete(produto);
+            await _uof.Commit();
+
+            var produtoDto = _mapper.Map<ProdutoDTO>(produto);
+
+            return produtoDto;
         }
     }
 }

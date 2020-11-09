@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Dev\\ApiCatalogo\\ApiCatalogo\\ApiCatalogo.csproj": {}
+    "C:\\Dev\\dotnetapi\\ApiCatalogo\\ApiCatalogo.csproj": {}
   },
   "projects": {
-    "C:\\Dev\\ApiCatalogo\\ApiCatalogo\\ApiCatalogo.csproj": {
+    "C:\\Dev\\dotnetapi\\ApiCatalogo\\ApiCatalogo.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Dev\\ApiCatalogo\\ApiCatalogo\\ApiCatalogo.csproj",
+        "projectUniqueName": "C:\\Dev\\dotnetapi\\ApiCatalogo\\ApiCatalogo.csproj",
         "projectName": "ApiCatalogo",
-        "projectPath": "C:\\Dev\\ApiCatalogo\\ApiCatalogo\\ApiCatalogo.csproj",
+        "projectPath": "C:\\Dev\\dotnetapi\\ApiCatalogo\\ApiCatalogo.csproj",
         "packagesPath": "C:\\Users\\willi\\.nuget\\packages\\",
-        "outputPath": "C:\\Dev\\ApiCatalogo\\ApiCatalogo\\obj\\",
+        "outputPath": "C:\\Dev\\dotnetapi\\ApiCatalogo\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
@@ -42,6 +42,14 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[10.1.1, )"
+            },
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.1.0, )"
+            },
             "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
               "target": "Package",
               "version": "[3.1.9, )"
@@ -87,7 +95,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.200\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.302\\RuntimeIdentifierGraph.json"
         }
       }
     }

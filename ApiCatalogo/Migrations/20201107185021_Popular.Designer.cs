@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiCatalogo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201105135404_Populadb")]
-    partial class Populadb
+    [Migration("20201107185021_Popular")]
+    partial class Popular
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
