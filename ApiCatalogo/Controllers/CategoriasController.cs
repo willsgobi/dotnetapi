@@ -3,13 +3,17 @@ using ApiCatalogo.Models;
 using ApiCatalogo.Pagination;
 using ApiCatalogo.Repository;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ApiCatalogo.Controllers {
+    [ApiConventionType(typeof(DefaultApiConventions))]
+    [Produces("application/json")]
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriasController : ControllerBase {
@@ -28,25 +32,54 @@ namespace ApiCatalogo.Controllers {
             return categoriasDto;
         }
 
+        //[HttpGet]
+        //public ActionResult<IEnumerable<CategoriaDTO>> Get([FromQuery] CategoriaParameters categoriasParameters) {
+        //    var categorias = _uof.CategoriaRepository.GetCategorias(categoriasParameters);
+
+        //    var metadata = new {
+        //        categorias.TotalCount,
+        //        categorias.PageSize,
+        //        categorias.CurrentPage,
+        //        categorias.TotalPages,
+        //        categorias.HasNext,
+        //        categorias.HasPrevious
+        //    };
+
+        //    Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+        //    var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
+        //    return categoriasDTO;
+        //}
+
         [HttpGet]
-        public ActionResult<IEnumerable<CategoriaDTO>> Get([FromQuery] CategoriaParameters categoriasParameters) {
-            var categorias = _uof.CategoriaRepository.GetCategorias(categoriasParameters);
+        public ActionResult<IEnumerable<CategoriaDTO>> Get() {
+            try {
+                var categorias = _uof.CategoriaRepository.Get();
 
-            var metadata = new {
-                categorias.TotalCount,
-                categorias.PageSize,
-                categorias.CurrentPage,
-                categorias.TotalPages,
-                categorias.HasNext,
-                categorias.HasPrevious
-            };
+                //var metadata = new {
+                //    categorias.TotalCount,
+                //    categorias.PageSize,
+                //    categorias.CurrentPage,
+                //    categorias.TotalPages,
+                //    categorias.HasNext,
+                //    categorias.HasPrevious
+                //};
 
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+                //Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
 
-            var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
-            return categoriasDTO;
+                var categoriasDTO = _mapper.Map<List<CategoriaDTO>>(categorias);
+                //throw new Exception();
+                return categoriasDTO;
+            } catch (Exception) {
+                return BadRequest();
+            }
         }
 
+        /// <summary>
+        /// Obtem uma categoria por ID
+        /// </summary>
+        /// <param name="id">código da categoria</param>
+        /// <returns>objetos categoria</returns>
         [HttpGet("{id}", Name = "ObterCategoria")]
         public async Task<ActionResult<CategoriaDTO>> Get(int id) {
             var categoria = await _uof.CategoriaRepository.GetById(c => c.CategoriaId == id);

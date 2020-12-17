@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ApiCatalogo</name>
+    </assembly>
+    <members>
+        <member name="M:ApiCatalogo.Controllers.CategoriasController.Get(System.Int32)">
+            <summary>
+            Obtem uma categoria por ID
+            </summary>
+            <param name="id">código da categoria</param>
+            <returns>objetos categoria</returns>
+        </member>
+    </members>
+</doc>

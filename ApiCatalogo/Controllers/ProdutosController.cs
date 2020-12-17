@@ -4,14 +4,14 @@ using ApiCatalogo.Models;
 using ApiCatalogo.Pagination;
 using ApiCatalogo.Repository;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiCatalogo.Controllers {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProdutosController : ControllerBase {
@@ -51,6 +51,8 @@ namespace ApiCatalogo.Controllers {
         }
 
         [HttpGet("{id}", Name = "ObterProduto")]
+        [ProducesResponseType(typeof(ProdutoDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProdutoDTO>> Get(int id) {
 
             var produto = await _uof.ProdutoRepository.GetById(p => p.ProdutoId == id);
@@ -63,6 +65,8 @@ namespace ApiCatalogo.Controllers {
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(ProdutoDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Post([FromBody] ProdutoDTO produtoDto) {
 
             var produto = _mapper.Map<Produto>(produtoDto);
@@ -75,6 +79,7 @@ namespace ApiCatalogo.Controllers {
         }
 
         [HttpPut("{id}")]
+        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Put))]
         public async Task<ActionResult> Put(int id, [FromBody] ProdutoDTO produtoDto) {
             if (id != produtoDto.ProdutoId) {
                 return BadRequest();
